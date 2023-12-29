@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+cd ~
+git clone https://github.com/IQ8QI/Arch-Package-list.git
+cd Arch-Package-list
+git pull origin main
+
+FILE_NAME=$(date +"pkg-list-%Y.%m.%d-%T")
+
+touch ./lists/$FILE_NAME.txt
+yay -Qqe >> ./lists/$FILE_NAME.txt
+
+FILE_COUNT=$(ls -1 ./lists | wc -l)
+if [ $FILE_COUNT -gt 1200 ]; then
+	OLDEST_FILE=$(ls -1tr ./lists | head -n 1)
+	rm ./lists/$OLDEST_FILE
+fi
+
+git add .
+git commit -m "Auto-commit: Package list on $FILE_NAME"
+git push -u origin main
